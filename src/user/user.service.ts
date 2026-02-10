@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -81,23 +86,34 @@ export class UserService {
     });
 
     if (!user) {
-      throw new BadRequestException(`Não encontrado usuário para ID: ${id}`);
+      throw new NotFoundException(`Não encontrado usuário para ID: ${id}`);
     }
 
     return user;
   }
 
   async remove(id: string) {
-    const existingUser = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
+      include: {
+        _count: {
+          select: { projects: true },
+        },
+      },
     });
 
-    if (!existingUser) {
-      throw new BadRequestException(`Não encontrado usuário para ID: ${id}`);
+    if (!user) {
+      throw new NotFoundException(`Não encontrado usuário para ID: ${id}`);
     }
 
-    return this.prisma.user.delete({
-      where: { id },
-    });
+    if (user._count.projects > 0) {
+      throw new ConflictException(
+        'Usuário não pode ser removido pois possui projetos vinculados.',
+      );
+    }
+
+    await this.prisma.user.delete({ where: { id } });
+
+    return { message: 'Usuário removido com sucesso' };
   }
 }
