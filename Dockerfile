@@ -1,20 +1,34 @@
-# Imagem estável compatível com Prisma
 FROM node:20-slim
 
-# Instalar OpenSSL (obrigatório pro Prisma)
-RUN apt-get update && apt-get install -y openssl
+RUN apt-get update && apt-get install -y openssl bash
 
-WORKDIR /app
+WORKDIR /home/node/app
 
 COPY package*.json ./
-
 RUN npm install
 
 COPY . .
 
-RUN npx prisma generate
-RUN npm run build
+RUN chmod +x .docker/entrypoint.sh
 
-EXPOSE 3001
+ENTRYPOINT ["/home/node/app/.docker/entrypoint.sh"]
 
-CMD ["node", "dist/main.js"]
+
+# FROM node:lts-alpine
+
+# RUN apk add --no-cache bash
+
+# WORKDIR /home/node/app
+
+# # Copiar apenas package.json / package-lock.json (ou yarn lock) para usar cache
+# COPY package.json package-lock.json ./
+
+# RUN npm install -g @nestjs/cli
+
+# # Copia todo o código (incluindo prisma, src, etc)
+# COPY . .
+
+# # Garantir bash no entrypoint se necessário
+# RUN chmod +x .docker/entrypoint.sh
+
+# ENTRYPOINT ["/home/node/app/.docker/entrypoint.sh"]
