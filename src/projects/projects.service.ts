@@ -28,8 +28,35 @@ export class ProjectsService {
     return project;
   }
 
-  findAll() {
-    return `This action returns all projects`;
+  async findAllProjects(page = 1, limit = 10, sort: 'asc' | 'desc' = 'desc') {
+    const currentPage = Math.max(page, 1);
+    const currentLimit = Math.max(limit, 1);
+
+    const total = await this.prisma.project.count();
+
+    const projects = await this.prisma.project.findMany({
+      skip: (currentPage - 1) * currentLimit,
+      take: currentLimit,
+      orderBy: { createdAt: sort },
+      include: {
+        user: {
+          select: { name: true, email: true },
+        },
+      },
+    });
+
+    return {
+      data: projects,
+      meta: {
+        total,
+        page: currentPage,
+        limit: currentLimit,
+        totalPages: Math.ceil(total / currentLimit),
+        hasNextPage: currentPage < Math.ceil(total / currentLimit),
+        hasPrevPage: currentPage,
+        sort,
+      },
+    };
   }
 
   findOne(id: number) {
