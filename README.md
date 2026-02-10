@@ -1,76 +1,59 @@
-# 🚀 Task Manager API
-
 <p align="center">
-  <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="NestJS Logo" />
+  <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
 </p>
 
+<h1 align="center">🗂️ Task Manager API</h1>
+
 <p align="center">
-API RESTful para gerenciamento de <strong>Usuários, Projetos e Tarefas</strong>, construída com <strong>NestJS</strong>, <strong>Prisma ORM</strong> e <strong>PostgreSQL</strong>, totalmente preparada para rodar com <strong>Docker</strong>.
+API REST para gerenciamento de usuários, projetos e tarefas, desenvolvida com foco em boas práticas de arquitetura, validação de dados e organização de código.
 </p>
 
 ---
 
-## 📌 Sobre o Projeto
+## 🚀 Tecnologias Utilizadas
 
-Esta API foi desenvolvida com foco em boas práticas de backend, arquitetura modular e organização de código, simulando um ambiente real de desenvolvimento para entrevistas técnicas.
-
-### O sistema permite:
-
-- Gerenciar **usuários**
-- Criar **projetos**
-- Criar e gerenciar **tarefas**
-- Relacionamento entre usuários → projetos → tarefas
-- Paginação de dados
-- Validações de entrada
-- Hash seguro de senhas
+- **Node.js**
+- **NestJS**
+- **Prisma ORM**
+- **PostgreSQL**
+- **Docker & Docker Compose**
+- **Class Validator**
+- **Bcrypt**
+- **TypeScript**
 
 ---
 
-## 🧱 Tecnologias Utilizadas
+## 🧠 Funcionalidades
 
-| Tecnologia | Função |
-|-----------|--------|
-| **NestJS** | Framework backend |
-| **Prisma** | ORM e acesso ao banco |
-| **PostgreSQL** | Banco de dados |
-| **Docker** | Containerização |
-| **TypeScript** | Linguagem |
-| **bcrypt** | Hash de senha |
-| **class-validator** | Validação de DTOs |
-
----
-
-## 📂 Entidades do Sistema
-
-### 👤 User
-| Campo | Tipo |
-|------|------|
-| id | string |
-| name | string |
-| email | string |
-| password | string (hash) |
-| createdAt | Date |
+✔ Cadastro de usuários  
+✔ Criptografia de senha  
+✔ Paginação de usuários  
+✔ CRUD de Projetos  
+✔ CRUD de Tarefas  
+✔ Relacionamento entre Usuário → Projetos → Tarefas  
+✔ Validação de DTOs  
+✔ Estrutura modular seguindo padrão do NestJS  
 
 ---
 
-### 📁 Project
-| Campo | Tipo |
-|------|------|
-| id | string |
-| name | string |
-| userId | string |
+## 🏗️ Arquitetura
 
----
+O projeto segue a arquitetura padrão do NestJS:
 
-### ✅ Task
-| Campo | Tipo |
-|------|------|
-| id | string |
-| title | string |
-| description | string |
-| status | ENUM |
-| dueDate | Date |
-| projectId | string |
+```
+src/
+ ├── modules
+ │   ├── user
+ │   ├── project
+ │   └── task
+ ├── prisma
+ └── main.ts
+```
+
+- Separação por domínio  
+- Services responsáveis por regra de negócio  
+- Controllers apenas para camada HTTP  
+- Prisma isolado em módulo próprio  
 
 ---
 
@@ -81,7 +64,119 @@ Esta API foi desenvolvida com foco em boas práticas de backend, arquitetura mod
 ```bash
 git clone <repo-url>
 cd task-manager-api
+```
+
+---
+
+### 🔹 2. Criar o arquivo de ambiente
+
+Copie o exemplo:
+
+```bash
+cp .env.example .env
+```
+
+Ou crie manualmente:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@postgres:5432/task_manager?schema=public"
+```
+
+---
+
+### 🔹 3. Subir a aplicação com Docker
+
+```bash
 docker-compose up --build
+```
 
+✅ **Pronto!** A API estará rodando em:
 
+```
+http://localhost:3001
+```
 
+---
+
+## 🐳 O que o Docker faz automaticamente
+
+Ao subir o container, o projeto já executa:
+
+- Instalação de dependências  
+- Geração do Prisma Client  
+- Execução das migrations  
+- Build da aplicação  
+- Inicialização do servidor NestJS  
+
+👉 Ambiente totalmente reprodutível.
+
+---
+
+## 🛠️ Rodar comandos dentro do container (opcional)
+
+Caso precise acessar o container:
+
+```bash
+docker exec -it task_manager_app bash
+```
+
+---
+
+## 📦 Principais Endpoints
+
+### 👤 Usuários
+
+| Método | Rota | Descrição |
+|-------|------|-----------|
+| POST | `/user` | Criar usuário |
+| GET | `/users` | Listar usuários com paginação |
+| GET | `/user/:id` | Listar usuários pelo id |
+| DELETE | `/user/:id` | Remove usuário, desde que não tenha projetos vinculados|
+
+---
+
+### 📁 Projetos
+
+| Método | Rota | Descrição |
+|-------|------|-----------|
+| POST | `/projects` | Criar projeto |
+| GET | `/projects` | Listar projetos com paginação |
+| GET | `/projects/:id` | Busca projetos pelo id |
+| GET | `/users/:userId/projects` | Listar projetos pelo id do usuário |
+| DELETE | `/projects/:id` | Remove projeto, desde que não tenha tarefas vinculadas |
+
+---
+
+### ✅ Tarefas
+
+| Método | Rota | Descrição |
+|-------|------|-----------|
+| POST | `/task` | Criar tarefa |
+| GET | `/task` | Listar tarefas com paginação |
+| GET | `/projects/:projectId/task` | Listar tarefas pelo id do projeto |
+| PATCH | `/task/:id` | Atualizar tarefa |
+| DELETE | `/task/:id` | Remover tarefa |
+
+---
+
+## 🔐 Segurança
+
+- Senhas criptografadas com **bcrypt**
+- DTOs validados com **class-validator**
+- Dados sensíveis não retornados nas respostas
+
+---
+
+## 🧪 Futuras melhorias
+
+- Autenticação com JWT  
+- Autorização por usuário  
+- Testes unitários  
+- Logs estruturados  
+- Deploy em cloud  
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT.
