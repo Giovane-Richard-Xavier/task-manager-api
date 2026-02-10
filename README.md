@@ -128,10 +128,10 @@ docker exec -it task_manager_app bash
 
 | Método | Rota | Descrição |
 |-------|------|-----------|
-| POST | `/user` | Criar usuário |
+| POST | `/users` | Criar usuário |
 | GET | `/users` | Listar usuários com paginação |
-| GET | `/user/:id` | Listar usuários pelo id |
-| DELETE | `/user/:id` | Remove usuário, desde que não tenha projetos vinculados|
+| GET | `/users/:id` | Busca usuários pelo id |
+| DELETE | `/users/:id` | Remove usuário, desde que não tenha projetos vinculados|
 
 ---
 
@@ -151,11 +151,11 @@ docker exec -it task_manager_app bash
 
 | Método | Rota | Descrição |
 |-------|------|-----------|
-| POST | `/task` | Criar tarefa |
-| GET | `/task` | Listar tarefas com paginação |
-| GET | `/projects/:projectId/task` | Listar tarefas pelo id do projeto |
-| PATCH | `/task/:id` | Atualizar tarefa |
-| DELETE | `/task/:id` | Remover tarefa |
+| POST | `/tasks` | Criar tarefa |
+| GET | `/tasks` | Listar tarefas com paginação |
+| GET | `/projects/:projectId/tasks` | Listar tarefas pelo id do projeto |
+| PATCH | `/tasks/:id` | Atualizar tarefa |
+| DELETE | `/tasks/:id` | Remover tarefa |
 
 ---
 
