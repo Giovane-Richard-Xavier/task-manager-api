@@ -31,13 +31,8 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectsService.update(+id, updateProjectDto);
+  getProjectById(@Param('id') id: string) {
+    return this.projectsService.getProjectById(id);
   }
 
   @Delete(':id')

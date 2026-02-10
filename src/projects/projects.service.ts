@@ -59,12 +59,31 @@ export class ProjectsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async getProjectById(id: string) {
+    const project = await this.prisma.project.findUnique({
+      where: { id },
+      include: { user: { select: { name: true, email: true } } },
+    });
+
+    if (!project) {
+      throw new BadRequestException(`Projeto não encotrado para ID: ${id}`);
+    }
+
+    return project;
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async getProjectByUserId(userId: string) {
+    const projects = await this.prisma.project.findMany({
+      where: { userId },
+    });
+
+    if (!projects) {
+      throw new BadRequestException(
+        `Projetos não encotrado para o userId: ${userId}`,
+      );
+    }
+
+    return projects;
   }
 
   remove(id: number) {

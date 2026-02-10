@@ -10,10 +10,14 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
+import { ProjectsService } from 'src/projects/projects.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly projectService: ProjectsService,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -31,6 +35,11 @@ export class UserController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.getUserById(id);
+  }
+
+  @Get(':userId/projects')
+  getProjectByUserId(@Param('userId') userId: string) {
+    return this.projectService.getProjectByUserId(userId);
   }
 
   @Delete(':id')
