@@ -47,6 +47,15 @@ export class ProjectsService {
         user: {
           select: { name: true, email: true },
         },
+        tasks: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            status: true,
+            dueDate: true,
+          },
+        },
       },
     });
 
@@ -102,7 +111,7 @@ export class ProjectsService {
     });
 
     if (!project) {
-      throw new NotFoundException(`Não encontrado projeto para ID: ${id}`);
+      throw new NotFoundException(`Nenhum Projeto encontrado com ID: ${id}`);
     }
 
     if (project._count.tasks > 0) {

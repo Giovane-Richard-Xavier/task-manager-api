@@ -10,10 +10,14 @@ import {
 } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectsService } from './projects.service';
+import { TasksService } from 'src/tasks/tasks.service';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(
+    private readonly projectsService: ProjectsService,
+    private readonly tasksService: TasksService,
+  ) {}
 
   @Post()
   create(@Body() createProjectDto: CreateProjectDto) {
@@ -31,6 +35,11 @@ export class ProjectsController {
   @Get(':id')
   getProjectById(@Param('id') id: string) {
     return this.projectsService.getProjectById(id);
+  }
+
+  @Get(':projectId/tasks')
+  getTasksByProjectId(@Param('projectId') projectId: string) {
+    return this.tasksService.getTasksByProjectId(projectId);
   }
 
   @Delete(':id')
