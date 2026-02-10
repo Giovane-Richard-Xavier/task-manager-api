@@ -78,8 +78,19 @@ export class TasksService {
     return task;
   }
 
-  update(id: string, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: string, updateTaskDto: UpdateTaskDto) {
+    const data = await this.prisma.task.findUnique({ where: { id } });
+
+    if (!data) {
+      throw new NotFoundException(`Não encontrada Tarefa com projectId: ${id}`);
+    }
+
+    const task = await this.prisma.task.update({
+      where: { id },
+      data: updateTaskDto,
+    });
+
+    return task;
   }
 
   async remove(id: string) {
