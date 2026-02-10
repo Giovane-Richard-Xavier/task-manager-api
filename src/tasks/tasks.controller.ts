@@ -31,8 +31,8 @@ export class TasksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
+  getTaskById(@Param('id') id: string) {
+    return this.tasksService.getTaskById(id);
   }
 
   @Patch(':id')
@@ -42,6 +42,6 @@ export class TasksController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+    return this.tasksService.remove(id);
   }
 }

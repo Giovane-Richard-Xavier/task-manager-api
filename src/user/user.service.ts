@@ -108,7 +108,7 @@ export class UserService {
 
     if (user._count.projects > 0) {
       throw new ConflictException(
-        'Usuário não pode ser removido pois possui projetos vinculados.',
+        'Usuário não pode ser removido pois possui projetos vinculados!',
       );
     }
 

@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -86,7 +91,28 @@ export class ProjectsService {
     return projects;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove(id: string) {
+    const project = await this.prisma.project.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { tasks: true },
+        },
+      },
+    });
+
+    if (!project) {
+      throw new NotFoundException(`Não encontrado projeto para ID: ${id}`);
+    }
+
+    if (project._count.tasks > 0) {
+      throw new ConflictException(
+        'Projeto não pode ser removido pois possui tarefas vinculadas!',
+      );
+    }
+
+    await this.prisma.project.delete({ where: { id } });
+
+    return { message: 'Projeto removido com sucesso!' };
   }
 }

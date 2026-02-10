@@ -53,15 +53,32 @@ export class TasksService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async getTaskById(id: string) {
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+      include: { project: { select: { name: true, description: true } } },
+    });
+
+    if (!task) {
+      throw new NotFoundException(`Não encontrada Tarefa com ID: ${id}`);
+    }
+
+    return task;
   }
 
   update(id: number, updateTaskDto: UpdateTaskDto) {
     return `This action updates a #${id} task`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: string) {
+    const task = await this.prisma.task.findUnique({ where: { id } });
+
+    if (!task) {
+      throw new NotFoundException(`Não encontrada Tarefa com ID: ${id}`);
+    }
+
+    await this.prisma.task.delete({ where: { id } });
+
+    return { message: 'Tarefa removida com sucesso!' };
   }
 }
