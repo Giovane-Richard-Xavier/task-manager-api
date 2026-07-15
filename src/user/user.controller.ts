@@ -4,13 +4,13 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
-  Query,
+  Query
 } from '@nestjs/common';
+import { ParamsPaginationDto } from 'src/common/dto/params-pagination';
+import { ProjectsService } from 'src/projects/projects.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
-import { ProjectsService } from 'src/projects/projects.service';
 
 @Controller('users')
 export class UserController {
@@ -26,10 +26,9 @@ export class UserController {
 
   @Get()
   findAll(
-    @Query('page', new ParseIntPipe()) page = 1,
-    @Query('limit', new ParseIntPipe()) limit = 10,
+    @Query() params: ParamsPaginationDto,
   ) {
-    return this.userService.findAllUsersPaginated(page, limit);
+    return this.userService.findAllUsersPaginated(params);
   }
 
   @Get(':id')
