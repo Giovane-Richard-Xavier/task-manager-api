@@ -7,6 +7,7 @@ import {
 import bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ParamsPaginationDto } from 'src/common/dto/params-pagination';
 
 @Injectable()
 export class UserService {
@@ -37,17 +38,18 @@ export class UserService {
   }
 
   async findAllUsersPaginated(
-    page = 1,
-    limit = 10,
-    sort: 'asc' | 'desc' = 'desc',
+params : ParamsPaginationDto
   ) {
+    const {page = 1, limit = 10, sort = 'desc'} = params;
+
     const currentPage = Math.max(page, 1);
     const currentLimit = Math.max(limit, 1);
+    const skip = (currentPage - 1) * currentLimit;
 
     const total = await this.prisma.user.count();
 
     const users = await this.prisma.user.findMany({
-      skip: (currentPage - 1) * currentLimit,
+      skip,
       take: currentLimit,
       orderBy: { createdAt: sort },
       select: {

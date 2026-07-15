@@ -4,9 +4,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { ParamsPaginationDto } from 'src/common/dto/params-pagination';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateProjectDto } from './dto/create-project.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -33,14 +33,17 @@ export class ProjectsService {
     return project;
   }
 
-  async findAllProjects(page = 1, limit = 10, sort: 'asc' | 'desc' = 'desc') {
+  async findAllProjects(params: ParamsPaginationDto) {
+    const {page = 1, limit = 10, sort = 'desc'} = params;
+
     const currentPage = Math.max(page, 1);
     const currentLimit = Math.max(limit, 1);
+    const skip = (currentPage - 1) * currentLimit;
 
     const total = await this.prisma.project.count();
 
     const projects = await this.prisma.project.findMany({
-      skip: (currentPage - 1) * currentLimit,
+      skip,
       take: currentLimit,
       orderBy: { createdAt: sort },
       include: {

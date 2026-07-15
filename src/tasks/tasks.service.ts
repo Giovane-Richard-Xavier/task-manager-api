@@ -3,6 +3,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { take } from 'rxjs';
+import { ParamsPaginationDto } from 'src/common/dto/params-pagination';
 
 @Injectable()
 export class TasksService {
@@ -26,14 +27,17 @@ export class TasksService {
     return task;
   }
 
-  async findAllTasks(page = 1, limit = 10, sort: 'asc' | 'desc' = 'desc') {
+  async findAllTasks(params: ParamsPaginationDto) {
+    const {page = 1, limit = 10, sort = 'desc'} = params;
+
     const currentPage = Math.max(page, 1);
     const currentLimit = Math.max(limit, 1);
+    const skip = (currentPage - 1) * currentLimit;
 
     const total = await this.prisma.task.count();
 
     const tasks = await this.prisma.task.findMany({
-      skip: (currentPage - 1) * currentLimit,
+      skip,
       take: currentLimit,
       orderBy: { createdAt: sort },
       include: { project: { select: { name: true, description: true } } },
