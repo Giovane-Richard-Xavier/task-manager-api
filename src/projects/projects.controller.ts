@@ -4,13 +4,13 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
-  Query,
+  Query
 } from '@nestjs/common';
+import { ParamsPaginationDto } from 'src/common/dto/params-pagination';
+import { TasksService } from 'src/tasks/tasks.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectsService } from './projects.service';
-import { TasksService } from 'src/tasks/tasks.service';
 
 @Controller('projects')
 export class ProjectsController {
@@ -26,10 +26,9 @@ export class ProjectsController {
 
   @Get()
   findAll(
-    @Query('page', new ParseIntPipe()) page = 1,
-    @Query('limit', new ParseIntPipe()) limit = 10,
+    @Query() params: ParamsPaginationDto,
   ) {
-    return this.projectsService.findAllProjects(page, limit);
+    return this.projectsService.findAllProjects(params);
   }
 
   @Get(':id')
