@@ -1,17 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Query,
-  ParseIntPipe,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query
 } from '@nestjs/common';
-import { TasksService } from './tasks.service';
+import { ParamsPaginationDto } from 'src/common/dto/params-pagination';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 export class TasksController {
@@ -24,10 +24,9 @@ export class TasksController {
 
   @Get()
   findAll(
-    @Query('page', new ParseIntPipe()) page = 1,
-    @Query('limit', new ParseIntPipe()) limit = 10,
+    @Query() params: ParamsPaginationDto,
   ) {
-    return this.tasksService.findAllTasks(page, limit);
+    return this.tasksService.findAllTasks(params);
   }
 
   @Get(':id')
